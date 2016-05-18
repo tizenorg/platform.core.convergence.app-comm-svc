@@ -1,0 +1,14 @@
+[Unit]
+Description=Remote Server service
+After=dlog-main.service dbus.service
+
+[Service]
+User=system
+Group=system
+Type=simple
+ExecStart=/usr/bin/remote-server
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

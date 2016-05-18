@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>V2 WebSocket API Tester</title>
+
+    <link rel="stylesheet/less" type="text/css" href="styles.less" />
+
+    <script src="../js/less-1.7.5.min.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="main.js"></script>
+
+</head>
+<body>
+
+<div id="wrapper">
+
+    <header id="cntHeading">
+        <h1>V2 WebSocket API Tester</h1>
+    </header>
+
+    <section id="cntConnection">
+
+        <label for="txtConnectUrl">Connection URL</label>
+        <input id="txtConnectUrl" type="text" value="" />
+
+        <button id="btnConnect">Connect</button>
+        <button id="btnDisconnect">Disconnect</button>
+
+    </section>
+
+    <section id="cntSend">
+
+        <label for="selectMethod">RPC Method</label>
+        <select id="selectMethod"></select>
+
+        <button id="btnSend">SEND</button>
+
+        <label for="txtSend">JSON to send</label>
+        <textarea id="txtSend"></textarea>
+
+
+
+    </section>
+
+    <section id="cntReceive">
+
+        <label for="txtReceive">JSON response</label>
+        <textarea id="txtReceive"></textarea>
+
+    </section>
+
+    <section id="cntNotifications">
+
+        <label for="txtNotification">Notifications</label>
+        <textarea id="txtNotification"></textarea>
+
+    </section>
+
+
+</div>
+
+
+</body>
+</html>

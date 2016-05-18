@@ -1,0 +1,9 @@
+{
+  "plugins" : {
+    "plugin-dev-tools"          : {},
+    "plugin-api-v2"             : {},
+    "plugin-mdns-js"            : {},
+    "plugin-msfd"               : {},
+    "device-plugin-tizen"       : {}
+  }
+}

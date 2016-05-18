@@ -1,0 +1,62 @@
+{
+	"name": "msf-service",
+	"displayName": "Samsung MultiScreen Framework Service",
+	"version": "2.0.25",
+	"description": "Samsung MultiScreen Framework Service",
+	"homepage": "http://samsungdforum.com/Features/MultiScreen",
+	"license": "Apache-2.0",	
+	"main": "./index.js",
+	"keywords": [
+		"multiscreen",
+		"mdns",
+		"websockets"
+	],
+	"author": "Samsung",
+	"private": false,
+	"scripts": {
+		"start": "node server.js",
+		"test": "node_modules/.bin/_mocha",
+		"build": "node_modules/.bin/gulp build",
+		"docs": "node_modules/.bin/bfdocs --theme=./resources/docs/theme/ ./resources/docs/manifest.json ./docs/"
+	},
+	"dependencies": {
+		"async": "~0.2.9",
+		"captchapng": "0.0.1",
+		"eventemitter2": "^0.4.13",
+		"express": "3.2.3",
+		"http-errors": "^1.2.5",
+		"lodash": "^2.4.1",
+		"mkdirp": "^0.5.0",
+		"ngrok": "^0.1.99",
+		"node-uuid": "~1.4.0",
+		"request": "~2.27.0",
+		"winston": "^0.8.1",
+		"yargs": "^1.3.3"
+	},
+	"engine": "node >= 0.10.15",
+	"jshintConfig": {
+		"curly": false,
+		"eqeqeq": true,
+		"immed": true,
+		"latedef": true,
+		"newcap": true,
+		"noarg": true,
+		"sub": true,
+		"undef": true,
+		"boss": true,
+		"eqnull": true,
+		"node": true,
+		"jquery": true,
+		"esnext": true,
+		"browser": true,
+		"devel": true,
+		"-W087": true,
+		"strict": false,
+		"evil": true,
+		"multistr": true,
+		"globals": {
+			"constants": false,
+			"tizen": false
+		}
+	}
+}

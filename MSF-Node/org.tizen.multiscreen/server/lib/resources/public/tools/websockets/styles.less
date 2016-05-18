@@ -1,0 +1,168 @@
+
+@font-face {
+    font-family: 'amatic';
+    src:url('../fonts/amaticsc-regular.woff') format('woff'),
+        url('../fonts/amaticsc-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #E5E5E5;
+    font-family: 'amatic', cursive;
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-family: 'amatic', cursive;
+}
+
+label{
+    font-weight: bolder;
+    font-size: 24px;
+    margin-bottom : 10px;
+}
+
+input, button, textarea, select {
+    padding : 5px;
+    border-radius: 5px;
+    background : #fff;
+    &:focus{
+        outline: 0;
+    }
+    &:disabled{
+        display: none;
+        background: url(../img/cross-out.png) center center no-repeat;
+        background-size: contain;
+        border : none;
+    }
+}
+
+button { .sketch-rounded-3d; }
+
+select, textarea{ .sketch-rounded; }
+
+input{ .sketch; }
+
+.sketch {
+    border: 7px solid transparent;
+    border-image: url('../img/sketch-border.png') 7 stretch;
+}
+
+.sketch-rounded {
+    border: 7px solid transparent;
+    border-image: url('../img/sketch-border-rounded.png') 7 stretch;
+}
+
+.sketch-rounded-3d {
+    border: 10px solid transparent;
+    border-image: url('../img/sketch-border-rounded-3d.png') 10 stretch;
+}
+
+#wrapper{
+    display: flex;
+    flex-flow: row wrap;
+    padding : 10px;
+}
+
+section, header{
+    display: flex;
+    flex-flow: row wrap;
+    background-color: #fff;
+    padding : 20px;
+    margin : 10px;
+    .sketch;
+}
+
+#cntHeading{
+    width: 100%;
+}
+
+#cntConnection{
+    width: 100%;
+    label {
+        width : 100%;
+    }
+    input {
+        width: 300px;
+    }
+    button {
+        margin-left: 10px;
+    }
+}
+
+#cntSend{
+    flex : 1;
+    label {
+        width : 100%;
+        &:not(:first-child){
+            margin-top: 20px;
+        }
+    }
+    select{
+        flex : 2;
+
+    }
+    button{
+        flex : 1;
+        margin-left: 10px;
+    }
+    textarea{
+        width :100%;
+        min-height: 200px;
+    }
+}
+
+#cntReceive{
+    flex : 1;
+    label {
+        width : 100%;
+    }
+    textarea{
+        width :100%;
+        min-height: 200px;
+    }
+}
+
+#cntNotifications{
+    flex : 1;
+    label {
+        width : 100%;
+    }
+    textarea{
+        width :100%;
+        min-height: 200px;
+    }
+}
+
+@-webkit-keyframes flash {
+    0% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: #fff085;
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.flash{
+    -webkit-animation-name: flash;
+    -webkit-animation-duration: 500ms;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-timing-function: ease-out;
+}
+

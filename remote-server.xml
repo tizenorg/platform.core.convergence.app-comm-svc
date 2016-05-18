@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://tizen.org/ns/packages" package="@PACKAGE_NAME@" version="@VERSION@" install-location="internal-only">
+        <label>Remote-Server</label>
+        <author email="ankit.sh1@samsung.com" href="www.samsung.com">Ankit Sharma</author>
+	<author email="shivaram.y@samsung.com" href="www.samsung.com">Shivaram Yadav</author>
+        <description>Remote Server Daemon</description>
+        <service-application appid="@PACKAGE_NAME@" exec="@BINDIR@/@PROJECT_NAME@" on-boot="true" type="c++app" auto-restart="false">
+        <label>service-application</label>
+        </service-application>
+</manifest>
+
+
+
+
