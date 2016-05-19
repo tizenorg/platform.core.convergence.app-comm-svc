@@ -105,7 +105,7 @@ systemctl enable remote-server.service
 %files
 %manifest remote-server.manifest
 %defattr(-,system,system,-)
-%{_bindir}/*
+%{_bindir}/remote-server
 %{_libdir}/systemd/system/%{name}.service
 %{_libdir}/systemd/system/org.tizen.multiscreen.service
 %{_libdir}/systemd/system/multi-user.target.wants/%{name}.service
