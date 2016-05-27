@@ -10,6 +10,8 @@ Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.service
 Source2: org.tizen.multiscreen.service
 
+%define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
+
 BuildRequires: cmake
 BuildRequires: boost-system
 BuildRequires: boost-thread
@@ -55,6 +57,12 @@ Requires: syspopup
 Summary:	remote-server header files and .pc file
 Group: 		Development/Libraries
 Requires:   %{name} = %{version}
+
+%if "%{?BUILD_PROFILE}" == "tv"
+ExcludeArch: aarch64 %ix86 x86_64
+%else
+ExcludeArch: %{arm} aarch64 %ix86 x86_64
+%endif
 
 %description devel
 THis package contains the head files and .pc file for remote-server
