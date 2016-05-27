@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <ctime>
+#include <time.h>
 #include <sstream>
 #include <string>
 #include <iterator>
@@ -41,8 +42,6 @@ map<Channel *, int> Channel::channel_alive_map;
 map<string, int> Channel::json_keys;
 pthread_t Channel::connect_thread;
 pthread_t ChannelConnectionHandler::ping_thread = 0;
-pthread_mutex_t socket_write_mutext = PTHREAD_MUTEX_INITIALIZER;
-// pthread_mutex_t is_write_mutext = PTHREAD_MUTEX_INITIALIZER;
 
 ChannelConnectionHandler::ChannelConnectionHandler() {
     pingTimeout = 5000000;
@@ -69,6 +68,7 @@ Channel::Channel() {
     resultresp = false;
     channel_alive_map.insert({this, 1});
     init_json_key_map();
+	cl_payload_size = 0;
 }
 
 Channel::Channel(Service *service1, string uri1) {
@@ -87,9 +87,10 @@ Channel::Channel(Service *service1, string uri1) {
     connectionHandler = new ChannelConnectionHandler();
     resultresp = false;
     service = service1;
-    m_uri = uri1;
+    ChannelID = uri1;
     channel_alive_map.insert({this, 1});
     init_json_key_map();
+	cl_payload_size = 0;
 }
 
 Channel *Channel::create(Service *service, string uri) {
@@ -114,6 +115,15 @@ Channel::~Channel() {
     onClientDisconnectListener = NULL;
     onReadyListener = NULL;
     channel_alive_map[this] = 0;
+
+	if (clients != NULL) {
+		delete clients;
+		clients = NULL;
+	}
+	if (connectionHandler != NULL) {
+		delete connectionHandler;
+		connectionHandler = NULL;
+	}
 }
 
 void Channel::init_json_key_map() {
@@ -978,19 +988,9 @@ int Channel::callback_lws_mirror(struct lws *wsi,
                 printf("\nwrite socket failed");
                 printf("\ncallback isWrite=false");
                 fflush(stdout);
-                // printf("\ntry unlock socket mutex\n");
-                // fflush(stdout);
-                pthread_mutex_unlock(&socket_write_mutext);
-                // printf("\nunlock socket mutex\n");
-                // fflush(stdout);
                 return -1;
             }
-            // fflush(stdout);
         }
-        // fflush(stdout);
-        // fflush(stdout);
-        pthread_mutex_unlock(&socket_write_mutext);
-        // fflush(stdout);
         lws_callback_on_writable(wsi);
         break;
 
@@ -1168,13 +1168,6 @@ void Channel::publishMessage(string method, string event, const char *data,
         unsigned char *prepare_buf = prepareMessageMap(
             method, event, data, to, &prepare_buf_len, payload, payload_size);
 
-        // printf("\ntry lock socket mutextn");
-        // fflush(stdout);
-        // lock buf[], socket, isWrite //
-        pthread_mutex_lock(&socket_write_mutext);
-        // printf("\nlock socket mutext\n");
-        // fflush(stdout);
-
         memcpy(&buf[LWS_SEND_BUFFER_PRE_PADDING],
                &prepare_buf[LWS_SEND_BUFFER_PRE_PADDING], prepare_buf_len);
 
@@ -1217,16 +1210,16 @@ unsigned char *Channel::prepareMessageMap(string method, string event,
     int l = 0;
     int header_size = 0;
 
-    unsigned char *prepare_buf =
-        new unsigned char[LWS_SEND_BUFFER_PRE_PADDING + 4096 +
-                          LWS_SEND_BUFFER_POST_PADDING];
+	int prepare_buf_size = LWS_SEND_BUFFER_PRE_PADDING + 4096 + LWS_SEND_BUFFER_POST_PADDING;
+    unsigned char *prepare_buf = new unsigned char[prepare_buf_size];
 
     if (payload) {
-        l += sprintf((char *)&prepare_buf[LWS_SEND_BUFFER_PRE_PADDING + 2],
-                     "{\n \"method\": \"%s\",\n \"params\": {\n \"event\": "
-                     "\"%s\",\n \"data\": \"%s\",\n \"to\": %s\n }\n}",
-                     method.c_str(), event.c_str(), (unsigned char *)data,
-                     (unsigned char *)to);
+        l += snprintf((char *)&prepare_buf[LWS_SEND_BUFFER_PRE_PADDING + 2],
+					prepare_buf_size - (LWS_SEND_BUFFER_PRE_PADDING + 2),
+					"{\n \"method\": \"%s\",\n \"params\": {\n \"event\": "
+					"\"%s\",\n \"data\": \"%s\",\n \"to\": %s\n }\n}",
+					method.c_str(), event.c_str(), (unsigned char *)data,
+					(unsigned char *)to);
 
         header_size = l;
 
@@ -1250,11 +1243,12 @@ unsigned char *Channel::prepareMessageMap(string method, string event,
 
         binary_message = true;
     } else {
-        l += sprintf((char *)&prepare_buf[LWS_SEND_BUFFER_PRE_PADDING],
-                     "{\n \"method\": \"%s\",\n \"params\": {\n \"event\": "
-                     "\"%s\",\n \"data\": \"%s\",\n \"to\": %s\n }\n}",
-                     method.c_str(), event.c_str(), (unsigned char *)data,
-                     (unsigned char *)to);
+        l += snprintf((char *)&prepare_buf[LWS_SEND_BUFFER_PRE_PADDING],
+					prepare_buf_size - LWS_SEND_BUFFER_PRE_PADDING,
+					"{\n \"method\": \"%s\",\n \"params\": {\n \"event\": "
+					"\"%s\",\n \"data\": \"%s\",\n \"to\": %s\n }\n}",
+					method.c_str(), event.c_str(), (unsigned char *)data,
+					(unsigned char *)to);
         binary_message = false;
     }
     MSF_DBG("buf is = %s %d \n", &buf[LWS_SEND_BUFFER_PRE_PADDING], l);
@@ -1270,19 +1264,10 @@ void Channel::start_app(char *data, int buflength, string msgID) {
     UID = msgID;
     int l = 0;
 
-    // socket mutext start//
-    // printf("\ntry lock socket mutex\n");
-
-    // lock buf[], socket, isWrite //
-    pthread_mutex_lock(&socket_write_mutext);
-    // printf("\nlock socket mutex\n");
-    l += sprintf((char *)&buf[LWS_SEND_BUFFER_PRE_PADDING], data);
+    l += snprintf((char *)&buf[LWS_SEND_BUFFER_PRE_PADDING], sizeof(buf) - LWS_SEND_BUFFER_PRE_PADDING, data);
     MSF_DBG("buf is = %s %d \n", &buf[LWS_SEND_BUFFER_PRE_PADDING], l);
     buflen = l;
     buf[LWS_SEND_BUFFER_PRE_PADDING + l] = 0;
-
-    if (data == NULL) {
-    }
 
     dlog_print(DLOG_INFO, "MSF", "start_app() buf = %s",
                &buf[LWS_SEND_BUFFER_PRE_PADDING]);
@@ -1329,7 +1314,8 @@ pair<void *, int> Channel::getcallback(string uid) {
 
 string Channel::getUID() {
     std::stringstream ss;
-    ss << (rand() % 9000 + 1000);
+	unsigned int seed = time(NULL);
+    ss << (rand_r(&seed) % 9000 + 1000);
     string randID = ss.str();
     return randID;
 }
@@ -1385,9 +1371,7 @@ void Channel::create_websocket(void *att) {
 #ifndef LWS_NO_EXTENSIONS
 // info.extensions = lws_get_internal_extensions();
 #endif
-    if (this != NULL) {
-        info.user = this;
-    }
+
     if (isWebSocketOpen()) {
         MSF_DBG("\nAlready Connected");
         dlog_print(DLOG_INFO, "MSF", "create_websocket already Connected");

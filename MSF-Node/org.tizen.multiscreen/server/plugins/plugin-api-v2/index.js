@@ -75,6 +75,9 @@ function ApiV2(config){
 
     // REST API : Service
     this.app.get(URI_PATH,this.getServiceInfo.bind(this));
+
+	// REST API : duid
+    this.app.get(URI_PATH + 'device/id',this.getDeviceID.bind(this));
     
     // REST API : Party Mode
 
@@ -146,27 +149,51 @@ ApiV2.prototype.configureChannels = function(){
 
 };
 
-
-
 ApiV2.prototype.getServiceInfo = function(req, res, next){
 
     this.logger.verbose("getServiceInfo");
 
     var self = this;
 
+    var deviceInfo = self.device.attributes;
+    deviceInfo.id = deviceInfo.duid;        // this is for security issue about bt-mac.
+
     var infoHandler = function(err, callback){
+		var connectionType = "";
+        (req.connection.encrypted) ? (connectionType = "https://") : (connectionType = "http://");
+		if(deviceInfo.VoiceSupport === 'true')
+        serviceJson.remote_voiceControl = "true";
+        else
+         serviceJson.remote_voiceControl = "false";
         var serviceType = JSON.stringify(serviceJson);
         var info = {
-            id      : self.device.attributes.id,
-            name    : self.device.attributes.name,
+            id      : deviceInfo.id,
+            name    : deviceInfo.name,
             version : self.service.version,
-            device  : self.device.attributes,
-            type    : self.device.attributes.type,
-            uri     : "http://"+ req.get('host') + URI_PATH,
+            device  : deviceInfo,
+            type    : deviceInfo.type,
+            uri     : connectionType + req.get('host') + URI_PATH,
             remote  : self.service.remoteVersion,
             isSupport : serviceType
         };
         callback(null,info);
+    };
+
+    infoHandler({}, createCallbackResponder(req, res, next));
+};
+
+ApiV2.prototype.getDeviceID = function(req, res, next){
+
+    this.logger.verbose("getDeviceID");
+
+	var device_id = this.device.attributes.duid;
+	var clientIp = utils.checkWhetherIpv6(req.headers['x-forwarded-for'] || req.connection.remoteAddress);
+
+    var infoHandler = function(err, callback){
+		if (clientIp == "127.0.0.1")
+			callback(null, device_id);
+		else
+			callback(null, "unauthorized");
     };
 
     infoHandler({}, createCallbackResponder(req, res, next));
