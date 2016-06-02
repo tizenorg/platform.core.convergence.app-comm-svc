@@ -54,7 +54,7 @@ Message::Message()
 
 Message::~Message()
 {
-	delete m_payload;
+	delete[] m_payload;
 }
 
 Message::Message(const Message& m)
