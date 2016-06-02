@@ -452,7 +452,9 @@ std::string IPCServer::MakeInformation()
 
 	//Make JSON
 	std::string info = "{\"DUID\":\"";
-	info += UDN.c_str();
+	// for platform
+	info += p2p_mac;
+	//info += UDN.c_str();
 
 	info += "\",\"Model\":\"";
 	#if 1 //for platform

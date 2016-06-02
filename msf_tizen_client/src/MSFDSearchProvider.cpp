@@ -79,6 +79,7 @@ void MSFDSearchProvider::createMSFD()
 	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		perror("socket");
 		dlog_print(DLOG_ERROR, "MSF", "MSFD socket faile");
+		return;
 	}
 
 	/**** MODIFICATION TO ORIGINAL */
@@ -111,27 +112,25 @@ void MSFDSearchProvider::createMSFD()
 		dlog_print(DLOG_ERROR, "MSF", "MSFD setsockopt failed");
 	}
 
+	struct timeval tv = {2, 0};
+
+	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+		perror("setsockopt");
+		dlog_print(DLOG_ERROR, "MSF", "MSFD setsockopt(SOL_SOCKET) failed");
+	}
+
 	while (1) {
 		addrlen = sizeof(msf_server_addr);
-		struct timeval tv;
-		tv.tv_sec = 0;
-		tv.tv_usec = 900000;
-
-		if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
-			perror("setsockopt");
-			dlog_print(DLOG_ERROR, "MSF", "MSFD setsockopt(SOL_SOCKET) failed");
-		}
 
 			dlog_print(DLOG_INFO, "MSF", "MSFD waiting packet");
 		if ((nbytes = recvfrom(fd, msgbuf, MSGBUFSIZE, 0, (struct sockaddr *) &msf_server_addr, &addrlen)) < 0) {
 			//dlog_print(DLOG_INFO, "MSF", "MSFD packet < 0");
 			receive = false;
-			dlog_print(DLOG_INFO, "MSF", "MSFD packet < 0 1");
+			dlog_print(DLOG_INFO, "MSF", "MSFD packet not received");
 			reapServices();
-			dlog_print(DLOG_INFO, "MSF", "MSFD packet < 0 2");
 		} else {
 			msgbuf[nbytes] = '\0';
-			dlog_print(DLOG_INFO, "MSF", "MSFD waiting packet = %s", msgbuf);
+			dlog_print(DLOG_INFO, "MSF", "MSFD packet = %s", msgbuf);
 			receive = true;
 			processReceivedMsg(msgbuf, nbytes);
 		}
