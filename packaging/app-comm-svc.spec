@@ -10,6 +10,8 @@ Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.service
 Source2: org.tizen.multiscreen.service
 
+ExcludeArch: aarch64 x86_64
+
 BuildRequires: cmake
 BuildRequires: boost-system
 BuildRequires: boost-thread
