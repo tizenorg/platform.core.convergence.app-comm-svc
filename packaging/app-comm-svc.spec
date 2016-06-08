@@ -41,14 +41,6 @@ BuildRequires: pkgconfig(bluetooth-api)
 BuildRequires: pkgconfig(argos_watchdog)
 BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(libtzplatform-config)
-BuildRequires: pkgconfig(gio-2.0)
-BuildRequires: pkgconfig(json-glib-1.0)
-BuildRequires: pkgconfig(libwebsockets)
-BuildRequires: pkgconfig(openssl)
-BuildRequires: curl
-BuildRequires: libcurl-devel
-BuildRequires: capi-network-nsd
-BuildRequires: capi-network-nsd-devel
 Requires: dbus
 #Requires(post): sys-assert
 Requires: syspopup
@@ -116,41 +108,3 @@ systemctl enable remote-server.service
 /usr/share/license/%{name}
 
 %files devel
-
-%package -n msf-api
-Summary:    Msf-api Shared Library (Development)
-Group:      System/Libraries
-
-%description -n msf-api
-msf-api Shared Library (DEV)
-
-%post -n msf-api
-/sbin/ldconfig
-
-%postun -n msf-api
-/sbin/ldconfig
-
-%files -n msf-api
-%manifest remote-server.manifest
-%defattr(-,root,root,-)
-%{_libdir}/libmsf-api.so*
-/usr/bin/msf-api-test*
-
-%package -n msf-api-devel
-Summary:    Msf-api Shared Library (Development)
-Group:      System/Libraries
-
-%description -n msf-api-devel
-msf-api Shared Library (DEV)
-
-%post -n msf-api-devel
-/sbin/ldconfig
-
-%postun -n msf-api-devel
-/sbin/ldconfig
-
-%files -n msf-api-devel
-%defattr(-,root,root,-)
-%{_includedir}/msf-api/*.h
-%{_libdir}/libmsf-api.so*
-%{_libdir}/pkgconfig/msf-api.pc
