@@ -48,7 +48,7 @@ int REMOTE::App::launch_app(const char *appid)
 
 	PRINT_INFO("[FUNC] rep_launch_app");
 
-	int ret;
+	int ret = -1;
 
 	bundle *pBundle = bundle_create();
 
@@ -60,7 +60,7 @@ int REMOTE::App::launch_app(const char *appid)
 	}
 
 	if (aul_app_is_running_for_uid(appid, tzplatform_getuid(TZ_SYS_DEFAULT_USER)))
-		aul_resume_app_for_uid(appid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+		ret = aul_resume_app_for_uid(appid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
 	else
 		ret = aul_launch_app_for_uid(appid, pBundle, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
 
@@ -88,7 +88,7 @@ int REMOTE::App::launch_browser(const char *url)
 
 	PRINT_INFO("[FUNC] rep_launch_browser");
 
-	int ret;
+	int ret = -1;
 
 	bundle *pBundle = bundle_create();
 
@@ -102,7 +102,7 @@ int REMOTE::App::launch_browser(const char *url)
 	aul_svc_set_uri(pBundle, url); // url setting API
 
 	if (aul_app_is_running_for_uid("org.tizen.browser", tzplatform_getuid(TZ_SYS_DEFAULT_USER)))
-		aul_resume_app_for_uid("org.tizen.browser", tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+		ret = aul_resume_app_for_uid("org.tizen.browser", tzplatform_getuid(TZ_SYS_DEFAULT_USER));
 	else
 		ret = aul_launch_app_for_uid("org.tizen.browser", pBundle, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
 

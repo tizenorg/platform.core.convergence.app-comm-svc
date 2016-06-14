@@ -175,18 +175,8 @@ bool CRemoteLogger::m_Create(void)
 
 bool CRemoteLogger::m_GetFWVersion(void)
 {
-	char *strBuildVer = NULL;
-
-	if (strBuildVer != NULL) {
-		m_strFWVersion.assign(strBuildVer);
-		free(strBuildVer);
-		strBuildVer = NULL;
-	} else {
-		if (strBuildVer == NULL) {
-			REMOTE_PRINT_DEBUG("ERR: no build version");
-			return false;
-		}
-	}
-	return true;
+	// TODO:
+	REMOTE_PRINT_DEBUG("ERR: no build version");
+	return false;
 }
 
