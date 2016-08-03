@@ -138,7 +138,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/MSF-Node/org.tizen.multiscreen DESTINATION ${NODE_DIR})
 
-INSTALL(FILES packaging/org.tizen.multiscreen.service packaging/remote-server.service DESTINATION /usr/lib/systemd/system)
+INSTALL(FILES packaging/org.tizen.multiscreen.service packaging/remote-server.service DESTINATION /usr/lib/systemd/user)
 INSTALL(TARGETS ${PROJECT_NAME}  
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib

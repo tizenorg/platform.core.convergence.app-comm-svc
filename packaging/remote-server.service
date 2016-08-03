@@ -3,12 +3,9 @@ Description=Remote Server service
 After=dlog-main.service dbus.service
 
 [Service]
-User=system_fw
-Group=system_fw
 Type=simple
 ExecStart=/usr/bin/remote-server
 Restart=always
 
 [Install]
-WantedBy=multi-user.target
-
+WantedBy=default.target

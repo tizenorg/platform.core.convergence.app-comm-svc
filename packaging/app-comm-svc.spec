@@ -81,16 +81,14 @@ mkdir -p %{buildroot}/usr/share/license
 cp %{_builddir}/%{name}-%{version}/LICENSE.APLv2  %{buildroot}/usr/share/license/%{name}
 
 %make_install
-mkdir -p %{buildroot}%{_libdir}/systemd/system
-mkdir -p %{buildroot}%{_libdir}/systemd/system/multi-user.target.wants
-ln -sf ../%{name}.service %{buildroot}%{_libdir}/systemd/system/multi-user.target.wants/%{name}.service
-ln -sf ../org.tizen.multiscreen.service %{buildroot}%{_libdir}/systemd/system/multi-user.target.wants/org.tizen.multiscreen.service
 rm -Rf %{buildroot}%{_descriptiondir}
 mkdir -p %{buildroot}%{_descriptiondir}
 mkdir -p %{buildroot}/usr/apps/org.tizen.multiscreen
 
 %post
-systemctl enable remote-server.service
+mkdir -p %{_unitdir_user}/default.target.wants
+ln -s ../%{name}.service %{_unitdir_user}/default.target.wants/
+ln -s ../org.tizen.multiscreen.service %{_unitdir_user}/default.target.wants/
 /sbin/ldconfig
 
 %postun
@@ -100,10 +98,8 @@ systemctl enable remote-server.service
 %manifest remote-server.manifest
 %defattr(-,system,system,-)
 %{_bindir}/remote-server
-%{_libdir}/systemd/system/%{name}.service
-%{_libdir}/systemd/system/org.tizen.multiscreen.service
-%{_libdir}/systemd/system/multi-user.target.wants/%{name}.service
-%{_libdir}/systemd/system/multi-user.target.wants/org.tizen.multiscreen.service
+%attr(644,root,root) %{_unitdir_user}/%{name}.service
+%attr(644,root,root) %{_unitdir_user}/org.tizen.multiscreen.service
 %{_node_dir}/*
 /usr/share/license/%{name}
 

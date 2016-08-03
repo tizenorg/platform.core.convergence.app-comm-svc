@@ -3,11 +3,9 @@ Description=Node server start
 After=remote-server.service
 
 [Service]
-User=system_fw
-Group=system_fw
 Type=simple
 ExecStart = /usr/bin/node /usr/apps/org.tizen.multiscreen/server/server.js
 Restart=always
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
