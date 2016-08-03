@@ -40,7 +40,6 @@ BuildRequires: pkgconfig(libxml-2.0)
 BuildRequires: pkgconfig(bluetooth-api)
 BuildRequires: pkgconfig(argos_watchdog)
 BuildRequires: pkgconfig(aul)
-BuildRequires: pkgconfig(libtzplatform-config)
 Requires: dbus
 #Requires(post): sys-assert
 Requires: syspopup

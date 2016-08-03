@@ -3,12 +3,12 @@ PROJECT(remote-server CXX)
 SET(EXTERNAL_RESOURCES_DIR ${CMAKE_CURRENT_BINARY_DIR}/external)
 
 
-# --- VARIABLES 
+# --- VARIABLES
 
 # -- building options
 
 # C++
-SET(CMAKE_CXX_FLAGS "-Wall -DHAVE_NETINET_IN_H -lsystemd-daemon -lpthread -Wno-variadic-macros -fPIC") 
+SET(CMAKE_CXX_FLAGS "-Wall -DHAVE_NETINET_IN_H -lsystemd-daemon -lpthread -Wno-variadic-macros -fPIC")
 SET(CMAKE_CXX_FLAGS_DEBUG "-g -O2")
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
@@ -83,31 +83,30 @@ INCLUDE_DIRECTORIES(
 	)
 
 INCLUDE(FindPkgConfig)
-pkg_check_modules(packages REQUIRED 
-	capi-system-info 
-	capi-network-wifi 
-	capi-network-connection  
+pkg_check_modules(packages REQUIRED
+	capi-system-info
+	capi-network-wifi
+	capi-network-connection
 	capi-appfw-app-manager
-	glib-2.0 
-	libcurl 
-	dlog 
-	dbus-glib-1 
-	gobject-2.0 
-	gmodule-2.0 
-	syspopup 
-	syspopup-caller 
-	capi-appfw-application 
-	vconf 
-	capi-system-system-settings 
-	gio-2.0 
-	libsystemd 
-	jsoncpp 
-	deviced 
+	glib-2.0
+	libcurl
+	dlog
+	dbus-glib-1
+	gobject-2.0
+	gmodule-2.0
+	syspopup
+	syspopup-caller
+	capi-appfw-application
+	vconf
+	capi-system-system-settings
+	gio-2.0
+	libsystemd
+	jsoncpp
+	deviced
 	libxml-2.0
 	bluetooth-api
 	argos_watchdog
 	aul
-	libtzplatform-config
 )
 
 
@@ -139,7 +138,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/MSF-Node/org.tizen.multiscreen DESTINATION ${NODE_DIR})
 
 INSTALL(FILES packaging/org.tizen.multiscreen.service packaging/remote-server.service DESTINATION /usr/lib/systemd/user)
-INSTALL(TARGETS ${PROJECT_NAME}  
+INSTALL(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
 )
