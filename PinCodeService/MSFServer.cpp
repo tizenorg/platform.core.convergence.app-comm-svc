@@ -29,7 +29,6 @@
 #include "REMOTEApp.h"
 #include <aul.h>
 #include <unistd.h>
-#include <tzplatform_config.h>
 
 int callee_pid;		// callee's pid. for launching and terminating the corresponding app
 
@@ -293,7 +292,7 @@ void MSFServer::DoGetApplication(int sock, Json::Value& params, std::string id)
 
 		bool running = false;
 
-		if (aul_app_is_running_for_uid(appID.c_str(), tzplatform_getuid(TZ_SYS_DEFAULT_USER)))
+		if (aul_app_is_running(appID.c_str()))
 			running = true;
 
 		appInfo["running"] = Json::Value(running);
@@ -327,7 +326,7 @@ void MSFServer::DoLaunchApplication(int sock, Json::Value& params, std::string i
 		//Check App is installed
 
 		if (NULL != appID.c_str()) {
-			int pid = aul_app_get_pid_for_uid((const char *)appID.c_str(), tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+			int pid = aul_app_get_pid((const char *)appID.c_str());
 
 			REMOTE_PRINT_INFO("BEFORE aul_app_get_pid:[%d] \n", pid);
 		
@@ -340,7 +339,7 @@ void MSFServer::DoLaunchApplication(int sock, Json::Value& params, std::string i
 
 			REMOTE_PRINT_INFO("REMOTE::App::launch_app callee_pid:[%d] \n", callee_pid);
 
-			pid = aul_app_get_pid_for_uid((const char *)appID.c_str(), tzplatform_getuid(TZ_SYS_DEFAULT_USER)); // for_uid
+			pid = aul_app_get_pid((const char *)appID.c_str());
 
 			REMOTE_PRINT_INFO("AFTER aul_app_get_pid:[%d] \n", pid);
 
@@ -353,7 +352,7 @@ void MSFServer::DoLaunchApplication(int sock, Json::Value& params, std::string i
 			int count = 0;
 
 			while (count++ < 10) {
-				if (aul_app_is_running_for_uid(appID.c_str(), tzplatform_getuid(TZ_SYS_DEFAULT_USER)))
+				if (aul_app_is_running(appID.c_str()))
 					break;
 
 				usleep(500000);
@@ -382,7 +381,7 @@ void MSFServer::DoStopApplication(int sock, Json::Value& params, std::string id)
 
 		int ret;
 
-		if (aul_app_is_running_for_uid(appID.c_str(), tzplatform_getuid(TZ_SYS_DEFAULT_USER))) {
+		if (aul_app_is_running(appID.c_str())) {
 			ret = REMOTE::App::terminate_app(callee_pid);
 			if (ret < 0) {
 				REMOTE_PRINT_INFO("REMOTE::App::terminate_app FAIL [%d]", ret);

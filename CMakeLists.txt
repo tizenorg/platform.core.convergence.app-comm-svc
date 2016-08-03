@@ -107,7 +107,6 @@ pkg_check_modules(packages REQUIRED
 	bluetooth-api
 	argos_watchdog
 	aul
-	libtzplatform-config
 )
 
 

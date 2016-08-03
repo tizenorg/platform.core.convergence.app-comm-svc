@@ -20,7 +20,6 @@
 #include <aul.h>
 #include <aul_svc.h> // for using aul_svc_set_uri()
 #include <bundle.h>
-#include <tzplatform_config.h>
 #include "CCDebugRemote.h"
 
 int _iter_visible_cb(const aul_app_info *info, void *data)
@@ -28,7 +27,7 @@ int _iter_visible_cb(const aul_app_info *info, void *data)
 	int ret;
 	int *pid = (int *)data;
 
-	ret = aul_app_get_status_bypid_for_uid(info->pid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+	ret = aul_app_get_status_bypid(info->pid);
 
 	if (STATUS_VISIBLE == ret) {
 		PRINT_INFO("[%s][%d] STATUS_VISIBLE [%d]", __PRETTY_FUNCTION__, __LINE__, info->pid);
@@ -59,10 +58,10 @@ int REMOTE::App::launch_app(const char *appid)
 		return -1;
 	}
 
-	if (aul_app_is_running_for_uid(appid, tzplatform_getuid(TZ_SYS_DEFAULT_USER)))
-		ret = aul_resume_app_for_uid(appid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+	if (aul_app_is_running(appid))
+		ret = aul_resume_app(appid);
 	else
-		ret = aul_launch_app_for_uid(appid, pBundle, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+		ret = aul_launch_app(appid, pBundle);
 
 	if (ret < 0) {
 		PRINT_INFO("[%s][%d] aul_launch_app FAIL [%d]", __PRETTY_FUNCTION__, __LINE__, ret);
@@ -101,10 +100,10 @@ int REMOTE::App::launch_browser(const char *url)
 
 	aul_svc_set_uri(pBundle, url); // url setting API
 
-	if (aul_app_is_running_for_uid("org.tizen.browser", tzplatform_getuid(TZ_SYS_DEFAULT_USER)))
-		ret = aul_resume_app_for_uid("org.tizen.browser", tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+	if (aul_app_is_running("org.tizen.browser"))
+		ret = aul_resume_app("org.tizen.browser");
 	else
-		ret = aul_launch_app_for_uid("org.tizen.browser", pBundle, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+		ret = aul_launch_app("org.tizen.browser", pBundle);
 
 	if (ret < 0) {
 		PRINT_INFO("[%s][%d] aul_launch_app FAIL [%d]", __PRETTY_FUNCTION__, __LINE__, ret);
@@ -136,7 +135,7 @@ int REMOTE::App::terminate_app(int pid)
 	if (pid < 0) {
 		return -1;
 	} else {
-		ret = aul_terminate_pid_for_uid(pid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+		ret = aul_terminate_pid(pid);
 
 		if (ret < 0) {
 			PRINT_INFO("[%s][%d] aul_terminate_pid FAIL [%d], PID [%d]", __PRETTY_FUNCTION__, __LINE__, ret, pid);
@@ -156,7 +155,7 @@ int REMOTE::App::get_current_showing_app(int *pid)
 
 	int ret;
 
-	ret = aul_app_get_running_app_info_for_uid(_iter_visible_cb, pid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+	ret = aul_app_get_running_app_info(_iter_visible_cb, pid);
 
 	if (ret < 0) {
 		PRINT_INFO("[%s][%d] FAIL [%d]", __PRETTY_FUNCTION__, __LINE__, ret);
@@ -176,7 +175,7 @@ int REMOTE::App::get_current_showing_app(char **appid)
 	int ret;
 	int *pid = NULL;
 
-	ret = aul_app_get_running_app_info_for_uid(_iter_visible_cb, pid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+	ret = aul_app_get_running_app_info(_iter_visible_cb, pid);
 
 	if (ret < 0) {
 		PRINT_INFO("[%s][%d] FAIL [%d]", __PRETTY_FUNCTION__, __LINE__, ret);
@@ -186,7 +185,7 @@ int REMOTE::App::get_current_showing_app(char **appid)
 
 	PRINT_INFO("[%s][%d] SUCCESS [%d], pid:[%d]", __PRETTY_FUNCTION__, __LINE__, ret, *pid);
 
-	ret = aul_app_get_appid_bypid_for_uid(*pid, *appid, sizeof(*appid), tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+	ret = aul_app_get_appid_bypid(*pid, *appid, sizeof(*appid));
 
 	return ret;
 }
@@ -195,7 +194,7 @@ int REMOTE::App::get_app_status(int pid, int *status)
 {
 	int ret;
 
-	ret = aul_app_get_status_bypid_for_uid(pid, tzplatform_getuid(TZ_SYS_DEFAULT_USER));
+	ret = aul_app_get_status_bypid(pid);
 
 	if (ret < 0) {
 		return -1;
